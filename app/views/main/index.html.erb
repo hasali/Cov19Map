@@ -1,0 +1,40 @@
+<h2>Main App</h2>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+ <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+<style type="text/css">
+        .leaflet-container{background-color:#fff;}
+    </style>
+ <%# <div id='map' style='width: 600px; height: 400px;'></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaGludSIsImEiOiJja3I1OXRtM3MxeXgwMnJyeGF2M2ZiaDBjIn0.vcPbEcLEd6tDBRyIQR9UqQ';
+    var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/hinu/ckrcei4cs12y517pfzzm1rtjw'
+    });
+
+    map.setMaxBounds([[-140.798042, 41.838587],[-49.752809,73.148377] ]);
+  </script> %>
+  <div id="map2" style="width: 600px; height: 400px"></div>
+
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script>
+        var myGeoJSONPath = '/georef-canada-province.geojson';
+        //var myGeoJSONPath = '/custom.geo.json';
+        var myCustomStyle = {
+            stroke: false,
+            fill: true,
+            fillColor: '#000',
+            fillOpacity: 1
+        }
+        $.getJSON(myGeoJSONPath,function(data){
+            var map = L.map('map2').setView([58.74739, -98], 3.4);
+
+            L.geoJson(data, {
+                clickable: false,
+                style: myCustomStyle
+            }).addTo(map);
+        })
+    </script>
+    <%# georef-canada-province.geojson %>

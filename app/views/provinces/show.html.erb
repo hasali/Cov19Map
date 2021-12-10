@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Coverage:</strong>
+  <%= @province.coverage %>
+</p>
+
+<p>
+  <strong>Prov name:</strong>
+  <%= @province.prov_name %>
+</p>
+
+<p>
+  <strong>Numtotal 1dose:</strong>
+  <%= @province.numtotal_1dose %>
+</p>
+
+<p>
+  <strong>Numtotal 2dose:</strong>
+  <%= @province.numtotal_2dose %>
+</p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @province.date %>
+</p>
+
+<%= link_to 'Edit', edit_province_path(@province) %> |
+<%= link_to 'Back', provinces_path %>

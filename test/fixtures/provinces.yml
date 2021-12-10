@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  coverage: MyString
+  prov_name: MyString
+  numtotal_1dose: 
+  numtotal_2dose: MyString
+  date: 2021-07-07
+
+two:
+  coverage: MyString
+  prov_name: MyString
+  numtotal_1dose: 
+  numtotal_2dose: MyString
+  date: 2021-07-07

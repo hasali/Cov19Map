@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Provinces</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Coverage</th>
+      <th>Prov name</th>
+      <th>Numtotal 1dose</th>
+      <th>Numtotal 2dose</th>
+      <th>Date</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @provinces.each do |province| %>
+      <tr>
+        <td><%= province.coverage %></td>
+        <td><%= province.prov_name %></td>
+        <td><%= province.numtotal_1dose %></td>
+        <td><%= province.numtotal_2dose %></td>
+        <td><%= province.date %></td>
+        <td><%= link_to 'Show', province %></td>
+        <td><%= link_to 'Edit', edit_province_path(province) %></td>
+        <td><%= link_to 'Destroy', province, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Province', new_province_path %>
