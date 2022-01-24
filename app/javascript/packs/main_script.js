@@ -1,51 +1,6 @@
+import * as d3 from "d3"
 
-<h2>Main App</h2>
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="https://unpkg.com/topojson@3"></script>
-<%# <script src="https://d3js.org/d3.v6.min.js"></script>
-<script src="https://d3js.org/topojson.v1.min.js"></script> %>
-<%# <%= javascript_pack_tag 'main_script' %> 
-<style type="text/css">
-path {
-  stroke: white;
-  stroke-width: 0.25px;
-  fill: grey;
-}
-        .leaflet-container{background-color:#fff;}
-         .wrapper {
-            margin-left: auto;
-            margin-right: auto;
-            width: 800px;
-        }
-
-        .map_mesh {
-            fill: none;
-            stroke: #fff;
-            stroke-width: .5px;
-            stroke-linejoin: round;
-        }
-
-        .map_outline {
-            fill: #ddd;
-            stroke: #000;
-            stroke-width: 1.5px;
-        }
-
-        .map_province {
-            fill: #1f77b4;
-        }
-
-        .map_province:hover {
-            fill: #636363;
-            cursor: pointer;
-        }
-</style>
-
-    <div class="wrapper"></div> 
-    <script>
-        
-
-        const parseTime = d3.timeParse("%Y-%m-%d");
+const parseTime = d3.timeParse("%Y-%m-%d");
         var mapWidth = 900,
             mapHeight = 600;
 
@@ -54,7 +9,7 @@ path {
         var projection = d3.geoAlbers();
 
         var path = d3.geoPath()
-          .projection(projection);
+           .projection(projection);
 
         var svg = d3.select(".wrapper").append("svg")
             .attr("width", mapWidth)
@@ -66,8 +21,8 @@ path {
             .attr("class", "map_province_name")
 
         // load TopoJSON file of Canada
-        d3.json("/canadaprovtopo.json").then(function(canada) {
-          //if (error) throw error;
+        d3.json("/canadaprovtopo.json", function(error, canada) {
+          if (error) throw error;
 
           var provinces = topojson.feature(canada, canada.objects.canadaprov); 
 
@@ -103,10 +58,9 @@ path {
                 .attr("d", path);
           
           console.log(provinces.features);
-        console.log(provinces.features[0].properties.name)
 
         });
-        d3.csv("/prov_loc.csv").then(function(data) {
+        d3.csv("/prov_loc.csv", function(data) {
             console.log(data);
             svg.selectAll("circle")
 	        .data(data)
@@ -126,24 +80,21 @@ path {
 		    .style("opacity", 0.85)	
             
         });
-        d3.csv('/vaccinations.csv', (d) => {
+        d3.csv('/vaccinations.csv', function(d){
             
-          
+            
             return{
                 province: d.prename,
                 doseTotal: +d.numtotal_all_administered,
                 dose1: +d.numtotal_dose1_administered,
                 dose2: +d.numtotal_dose2_administered,
-                dose3: +d.numtotal_dose3_administered 
-            };
-        
+                dose3: +d.numtotal_dose3_administered
+                //date: parseTime(d.report_date)
+            }
             
-        }).then(d => {
-            console.log(d);
         });
-        let mouseover = function(d) {  
-            
-          mapLabel.text(d.srcElement.__data__.properties.name) // remove suffix id from name
+        function mouseover(d) {     
+          mapLabel.text(d.properties.name.slice(0,-5)) // remove suffix id from name
         }
 
         function mouseout(d) {     
@@ -151,7 +102,6 @@ path {
         }
 
         function clicked(d) {
-          //Much Later
+          console.log(d.id, d.properties.name) // verify everything looks good
+          // Add code here
         }
-    </script> 
-    <%# georef-canada-province.geojson %>
