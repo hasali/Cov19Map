@@ -1,6 +1,9 @@
 import * as d3 from "d3"
 
+const _ = require("lodash");
 const parseTime = d3.timeParse("%Y-%m-%d");
+
+var dataFiles = ['/vaccinations.csv', '/prov_loc.csv'] 
 var mapWidth = 900,
   mapHeight = 600;
 
@@ -61,6 +64,36 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
   console.log(provinces.features[0].properties.name)
 
 });
+var promises=[];
+var freqData;
+Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
+
+  data[0].forEach(main => {
+    var addGeoData = data[1].filter((provLoc) => {
+      return main.pruid === provLoc.pruid;
+    });
+    main.long = (addGeoData[0] !== undefined) ? addGeoData[0].long : null;
+    main.lat = (addGeoData[0] !== undefined) ? addGeoData[0].lat : null;
+    return { main }
+  })
+  var filteredData = data[0].filter((row) => {
+    return row['report_date'].slice(8, 10) == '28';
+  })
+  console.log("newer merge???", data[0]);
+  freqData = filteredData.map((d) => {
+    return {
+      Province: d.prename,
+      DoseTotal: +d.numtotal_all_administered,
+      Dose1: +d.numtotal_dose1_administered,
+      Dose2: +d.numtotal_dose2_administered,
+      Dose3: +d.numtotal_dose3_administered,
+      Date: parseTime(d.report_date),
+      Lat: +d.lat,
+      Long: +d.long
+    };
+  })
+  console.log("freqData", freqData);
+}); 
 d3.csv("/prov_loc.csv").then(function (data) {
   console.log(data);
   svg.selectAll("circle")
@@ -81,30 +114,27 @@ d3.csv("/prov_loc.csv").then(function (data) {
     .style("opacity", 0.85)
 
 });
-var freqData;
-//var filteredData;
-d3.csv('/vaccinations.csv').then( (data) => {
-    var filteredData = data.filter((row)=>{  
-      return row['report_date'].slice(8,10) == "28";
-  });
-  
-  console.log("filteredData",filteredData);
-  freqData = filteredData.map((d)=>{
-    return {
-      Province: d.prename,
-      DoseTotal: +d.numtotal_all_administered,
-      Dose1: +d.numtotal_dose1_administered,
-      Dose2: +d.numtotal_dose2_administered,
-      Dose3: +d.numtotal_dose3_administered,
-      Date: parseTime(d.report_date)
-    };
-  })
-  
-  console.log("freqData",freqData);
 
-}).then((data) => {
-  console.log("bigdata",data);
-});
+//var filteredData;
+// d3.csv('/vaccinations.csv').then( (data) => {
+//     var filteredData = data.filter((row)=>{  
+//       return row['report_date'].slice(8,10) == "28";
+//   });
+
+//   freqData = filteredData.map((d)=>{
+//     return {
+//       Province: d.prename,
+//       DoseTotal: +d.numtotal_all_administered,
+//       Dose1: +d.numtotal_dose1_administered,
+//       Dose2: +d.numtotal_dose2_administered,
+//       Dose3: +d.numtotal_dose3_administered,
+//       Date: parseTime(d.report_date)
+//     };
+//   })
+  
+//   console.log("freqData",freqData);
+
+// });
 let mouseover = function (d) {
 
   mapLabel.text(d.srcElement.__data__.properties.name) // remove suffix id from name
