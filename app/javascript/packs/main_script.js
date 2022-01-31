@@ -23,6 +23,7 @@ var mapLabel = svg.append("text")
   .attr("x", 0)
   .attr("class", "map_province_name")
 
+/*---------------DRAW MAP!----------------*/
 // load TopoJSON file of Canada
 d3.json("/canadaprovtopo.json").then(function (canada) {
   //if (error) throw error;
@@ -59,27 +60,27 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .datum(topojson.mesh(canada, canada.objects.canadaprov, function (a, b) { return a !== b; }))
     .attr("class", "map_mesh")
     .attr("d", path);
-
-  console.log(provinces.features);
-  console.log(provinces.features[0].properties.name)
-
 });
-var promises=[];
+/*---------------LOAD DATA----------------*/
 var freqData;
 Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
+  //Left Outer Join province location data onto province vaccine data
   data[0].forEach(main => {
     var addGeoData = data[1].filter((provLoc) => {
       return main.pruid === provLoc.pruid;
     });
     main.long = (addGeoData[0] !== undefined) ? addGeoData[0].long : null;
     main.lat = (addGeoData[0] !== undefined) ? addGeoData[0].lat : null;
-    return { main }
+    
   })
+
+  //Get end of month vaccine data. 
   var filteredData = data[0].filter((row) => {
     return row['report_date'].slice(8, 10) == '28';
   })
-  console.log("newer merge???", data[0]);
+  
+  //Create Array of objects with the data we need.
   freqData = filteredData.map((d) => {
     return {
       Province: d.prename,
@@ -93,48 +94,27 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     };
   })
   console.log("freqData", freqData);
-}); 
-d3.csv("/prov_loc.csv").then(function (data) {
-  console.log(data);
+
+  //Draw/visualize data on map.
   svg.selectAll("circle")
-    .data(data)
+    .data(freqData)
     .enter()
     .append("circle")
     .attr("cx", function (d) {
-      return projection([d.long, d.lat])[0];
-
+      //return console.log(d.Lat,d.Long);
+      return projection([d.Long, d.Lat])[0];
+      
     })
     .attr("cy", function (d) {
-      return projection([d.long, d.lat])[1];
+      return projection([d.Long, d.Lat])[1];
     })
     .attr("r", function (d) {
-      return 20;
+      return 15;
     })
     .style("fill", "rgb(217,91,67)")
     .style("opacity", 0.85)
+}); 
 
-});
-
-//var filteredData;
-// d3.csv('/vaccinations.csv').then( (data) => {
-//     var filteredData = data.filter((row)=>{  
-//       return row['report_date'].slice(8,10) == "28";
-//   });
-
-//   freqData = filteredData.map((d)=>{
-//     return {
-//       Province: d.prename,
-//       DoseTotal: +d.numtotal_all_administered,
-//       Dose1: +d.numtotal_dose1_administered,
-//       Dose2: +d.numtotal_dose2_administered,
-//       Dose3: +d.numtotal_dose3_administered,
-//       Date: parseTime(d.report_date)
-//     };
-//   })
-  
-//   console.log("freqData",freqData);
-
-// });
 let mouseover = function (d) {
 
   mapLabel.text(d.srcElement.__data__.properties.name) // remove suffix id from name
