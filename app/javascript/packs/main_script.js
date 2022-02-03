@@ -79,7 +79,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   var filteredData = data[0].filter((row) => {
     return row['report_date'].slice(8, 10) == '28';
   })
-  
+
   //Create Array of objects with the data we need.
   freqData = filteredData.map((d) => {
     return {
@@ -94,8 +94,15 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     };
   })
   console.log("freqData", freqData);
+  
 
   //Draw/visualize data on map.
+  var canadaFinal = freqData[freqData.length-14];
+  
+  var rScale = d3.scaleLinear()
+      .domain([0,canadaFinal.DoseTotal])
+      .range([10,300]);
+
   svg.selectAll("circle")
     .data(freqData)
     .enter()
@@ -109,10 +116,11 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
       return projection([d.Long, d.Lat])[1];
     })
     .attr("r", function (d) {
-      return 15;
+      return rScale(d.Dose1);
     })
     .style("fill", "rgb(217,91,67)")
-    .style("opacity", 0.85)
+    .style("opacity", 0.9)
+    
 }); 
 
 let mouseover = function (d) {

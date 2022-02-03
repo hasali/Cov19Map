@@ -1,14 +1,14 @@
 pruid,prename,lat,long
-24,Quebec,53,-70
+24,Quebec,52.5,-72
 35,Ontario,50,-85
 59,British Columbia,54,-124
 48,Alberta,54,-115
 47,Saskatchewan,54,-106
 12,Nova Scotia,45,-63
 46,Manitoba,54,-98
-13,New Brunswick,46,-66
+13,New Brunswick,46.5,-66.4
 10,Newfoundland and Labrador,54,-62
-11,Prince Edward Island,46,-63
+11,Prince Edward Island,46.5,-63.3
 61,Northwest Territories,64,-118
 62,Nunavet,67,-89
 60,Yukon,64,-136
