@@ -1,7 +1,8 @@
 
 <h2>Main App</h2>
 <%# <script src="https://d3js.org/d3.v7.min.js"></script> %>
-<script src="https://unpkg.com/topojson@3"></script>
+<script src="https://unpkg.com/topojson"></script>
+<script src="https://unpkg.com/d3-simple-slider@1.10"></script>
 <%# <script src="https://d3js.org/d3.v6.min.js"></script>
 <script src="https://d3js.org/topojson.v1.min.js"></script> %>
   
@@ -39,9 +40,51 @@ path {
             fill: #636363;
             cursor: pointer;
         }
+            .ticks {
+      font-size: 10px;
+    }
+
+    .track,
+    .track-inset,
+    .track-overlay {
+      stroke-linecap: round;
+    }
+
+    .track {
+      stroke: #000;
+      stroke-opacity: 0.3;
+      stroke-width: 10px;
+    }
+
+    .track-inset {
+      stroke: #ddd;
+      stroke-width: 8px;
+    }
+
+    .track-overlay {
+      pointer-events: stroke;
+      stroke-width: 50px;
+      stroke: transparent;
+      cursor: crosshair;
+    }
+
+    .handle {
+      fill: #fff;
+      stroke: #000;
+      stroke-opacity: 0.5;
+      stroke-width: 1.25px;
+    }
 </style>
 
     <div class="wrapper"></div> 
+    <div class="value-time"></div>
+    <p>
+  <label for="nRadius" 
+         style="display: inline-block; width: 300px; text-align: right">
+        <span id="value">…</span>
+  </label>
+  <input type="range" min="0" max="11" id="nRadius">
+</p>
     <%#
     <script>
         
@@ -157,3 +200,4 @@ path {
      </script> %>
     <%# georef-canada-province.geojson %>
     <%= javascript_pack_tag 'main_script' %>
+    <%# <script src="https://unpkg.com/d3-simple-slider"></script> %>

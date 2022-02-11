@@ -1,9 +1,11 @@
 import * as d3 from "d3"
+//import { update } from "lodash";
+
 
 const _ = require("lodash");
 const parseTime = d3.timeParse("%Y-%m-%d");
 
-var dataFiles = ['/vaccinations.csv', '/prov_loc.csv'] 
+var dataFiles = ['/vaccinations.csv', '/prov_loc.csv']
 var mapWidth = 900,
   mapHeight = 600;
 
@@ -61,6 +63,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .attr("class", "map_mesh")
     .attr("d", path);
 });
+
 /*---------------LOAD DATA----------------*/
 var freqData;
 Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
@@ -72,7 +75,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     });
     main.long = (addGeoData[0] !== undefined) ? addGeoData[0].long : null;
     main.lat = (addGeoData[0] !== undefined) ? addGeoData[0].lat : null;
-    
+
   })
 
   //Get end of month vaccine data. 
@@ -94,36 +97,58 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     };
   })
   console.log("freqData", freqData);
-  
 
-  //Draw/visualize data on map.
-  var canadaFinal = freqData[freqData.length-14];
-  
+  console.log([...d3.group(freqData, d => d.Date)][0]);
+
+  var canadaFinal = freqData[freqData.length - 14];
+
   var rScale = d3.scaleLinear()
-      .domain([0,canadaFinal.DoseTotal])
-      .range([10,300]);
+    .domain([0, canadaFinal.DoseTotal])
+    .range([6, 400]);
 
   svg.selectAll("circle")
-    .data(freqData)
-    .enter()
-    .append("circle")
-    .attr("cx", function (d) {
-      //return console.log(d.Lat,d.Long);
+  .data(freqData)
+  .join("circle")
+  .attr("cx", (d) => {
       return projection([d.Long, d.Lat])[0];
-      
     })
-    .attr("cy", function (d) {
+  .attr("cy", d => {
       return projection([d.Long, d.Lat])[1];
     })
-    .attr("r", function (d) {
-      return rScale(d.Dose1);
-    })
+    // .attr("r", d => {
+    //   return rScale(d.DoseTotal);
+    // })
     .style("fill", "rgb(217,91,67)")
-    .style("opacity", 0.9)
-    
-}); 
+    .style("opacity", 0.4)
+    .style("stroke", "black")
+  
+  d3.select("#nRadius").on("input", function () {
+    update(+this.value);
+  });
 
-let mouseover = function (d) {
+  update(0);
+
+  function update(nIndex) {
+    var nRadius = [...d3.group(freqData, d => d.Date)][nIndex][1];
+
+    nRadius.forEach(d => {
+
+      d3.select("#value")
+        .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());
+      svg.selectAll("circle")
+      .data(nRadius)
+      .attr("r", d=>rScale(d.DoseTotal));
+      // svg.selectAll("circle")
+      // .data(d)
+      // .enter() 
+      // .attr("r", rScale(d.DoseTotal));
+    })
+
+    d3.select("#nRadius").property("value", nIndex);
+  }
+});
+
+let mouseover = d => {
 
   mapLabel.text(d.srcElement.__data__.properties.name) // remove suffix id from name
 }
