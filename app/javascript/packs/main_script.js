@@ -1,7 +1,6 @@
 import * as d3 from "d3"
 //import { update } from "lodash";
 
-
 const _ = require("lodash");
 const parseTime = d3.timeParse("%Y-%m-%d");
 
@@ -78,8 +77,10 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
   })
 
-  //Get end of month vaccine data. 
+  //Get end of month vaccine data. Also, use total dose field for first dose until it becomes available.   
   var filteredData = data[0].filter((row) => {
+    if(row['numtotal_dose1_administered'] == "")
+      row['numtotal_dose1_administered'] = row['numtotal_all_administered'];
     return row['report_date'].slice(8, 10) == '28';
   })
 
@@ -104,7 +105,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
   var rScale = d3.scaleLinear()
     .domain([0, canadaFinal.DoseTotal])
-    .range([6, 400]);
+    .range([5, 400]);
 
   svg.selectAll("circle")
   .data(freqData)
@@ -115,18 +116,13 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   .attr("cy", d => {
       return projection([d.Long, d.Lat])[1];
     })
-    // .attr("r", d => {
-    //   return rScale(d.DoseTotal);
-    // })
-    .style("fill", "rgb(217,91,67)")
-    .style("opacity", 0.4)
-    .style("stroke", "black")
+    
   
   d3.select("#nRadius").on("input", function () {
     update(+this.value);
   });
 
-  update(0);
+  update(11);
 
   function update(nIndex) {
     var nRadius = [...d3.group(freqData, d => d.Date)][nIndex][1];
@@ -137,11 +133,12 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
         .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());
       svg.selectAll("circle")
       .data(nRadius)
-      .attr("r", d=>rScale(d.DoseTotal));
-      // svg.selectAll("circle")
-      // .data(d)
-      // .enter() 
-      // .attr("r", rScale(d.DoseTotal));
+      .transition()
+      .duration(500)
+        .attr("r", d=>rScale(d.Dose1))
+        .style("fill", "rgb(217,91,67)")
+        .style("opacity", 0.4)
+        .style("stroke", "black")            
     })
 
     d3.select("#nRadius").property("value", nIndex);
