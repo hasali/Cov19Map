@@ -14,7 +14,7 @@ var projection = d3.geoAlbers();
 
 var path = d3.geoPath()
   .projection(projection);
-
+//use 'g'?
 var svg = d3.select(".wrapper").append("svg")
   .attr("width", mapWidth)
   .attr("height", mapHeight);
@@ -24,7 +24,8 @@ var mapLabel = svg.append("text")
   .attr("x", 0)
   .attr("class", "map_province_name")
 
-/*---------------DRAW MAP!----------------*/
+/*--------------------------------DRAW MAP!----------------------------------*/
+
 // load TopoJSON file of Canada
 d3.json("/canadaprovtopo.json").then(function (canada) {
   //if (error) throw error;
@@ -49,7 +50,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
   // get individual provinces
   svg.selectAll("path")
     .data(provinces.features)
-    .enter().append("path")
+    .join("path")
     .attr("class", "map_province")
     .attr("d", path)
     .on("mouseover", mouseover)
@@ -63,7 +64,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .attr("d", path);
 });
 
-/*---------------LOAD DATA----------------*/
+/*-----------------------------LOAD DATA----------------------------------*/
+
 var freqData;
 Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
@@ -107,39 +109,70 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     .domain([0, canadaFinal.DoseTotal])
     .range([5, 400]);
 
-  svg.selectAll("circle")
-  .data(freqData)
-  .join("circle")
-  .attr("cx", (d) => {
-      return projection([d.Long, d.Lat])[0];
-    })
-  .attr("cy", d => {
-      return projection([d.Long, d.Lat])[1];
-    })
-    
   
+  /*-----------------Draw Circle Markers----------------*/
+  svg.selectAll("circle")
+      .data(freqData)
+      .join("circle")
+      .attr("cx", (d) => {
+        return projection([d.Long, d.Lat])[0];
+      })
+      .attr("cy", d => {
+        return projection([d.Long, d.Lat])[1];
+      })
+  // Create Date slider and draw circles.
   d3.select("#nRadius").on("input", function () {
     update(+this.value);
   });
 
   update(11);
 
+ 
+
   function update(nIndex) {
+    //Create new array ordered by date using slider value as index. [1] is to access sub array in array of objects.
     var nRadius = [...d3.group(freqData, d => d.Date)][nIndex][1];
 
     nRadius.forEach(d => {
 
       d3.select("#value")
         .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());
-      svg.selectAll("circle")
-      .data(nRadius)
+    })
+    var circle = svg.selectAll("circle")
+      .data(nRadius);
+
+    circle.join("circle")
+      // .attr("cx", (d) => {
+      //   return projection([d.Long, d.Lat])[0];
+      // })
+      // .attr("cy", d => {
+      //   return projection([d.Long, d.Lat])[1];
+      // })
       .transition()
       .duration(500)
-        .attr("r", d=>rScale(d.Dose1))
-        .style("fill", "rgb(217,91,67)")
-        .style("opacity", 0.4)
-        .style("stroke", "black")            
-    })
+      .attr("r", d => rScale(d.Dose1))
+      .style("fill", "rgb(217,91,67)")
+      .style("opacity", 0.4)
+      .style("stroke", "black")
+
+    // circle.join("circle")
+    // .attr("cx", (d) => {
+    //   return projection([d.Long, d.Lat])[0];
+    // })
+    // .attr("cy", d => {
+    //   return projection([d.Long, d.Lat])[1];
+    // })
+    circle.join("circle")
+      .transition()
+      .duration(500)
+      .attr("r", d => rScale(d.Dose2))
+      .style("fill", "rgb(217,91,67)")
+      .style("opacity", 0.8)
+      .style("stroke", "black")
+
+
+
+
 
     d3.select("#nRadius").property("value", nIndex);
   }
