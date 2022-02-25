@@ -101,7 +101,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   })
   console.log("freqData", freqData);
 
-  console.log([...d3.group(freqData, d => d.Date)][0]);
+  console.log(d3.groups(freqData, d => d.Date));
 
   //console.log('promise data: ',promise);
 var canadaFinal = freqData[freqData.length - 14];
@@ -128,18 +128,39 @@ var canadaFinal = freqData[freqData.length - 14];
  
 
   function update(nIndex) {
-    //Create new array ordered by date using slider value as index. [1] is to access sub array in array of objects.
-    var nRadius = [...d3.group(freqData, d => d.Date)][nIndex][1];
+    //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
+    var nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
+    var nRadius2 = [...d3.group(freqData, d => d.Date)][nIndex][1];
 
-    nRadius.forEach(d => {
+    nRadius1.forEach(d => {
 
       d3.select("#value")
         .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());
         
     })
     //circles.exit().remove();
-    svg.select("#c1")
-     .data(nRadius)  
+    svg.selectAll(".circle1")
+     .data(nRadius1)  
+     .join("circle")
+     .attr("class", "circle1")
+    .attr("cx", (d) => {
+      return projection([d.Long, d.Lat])[0];
+    })
+    .attr("cy", d => {
+      return projection([d.Long, d.Lat])[1];
+    })
+    .transition()
+    .duration(500)
+    .attr("r", d => rScale(d.Dose1))
+    .style("fill", "rgb(217,91,67)")
+    .style("opacity", 0.4)
+    .style("stroke", "black")
+    
+    
+    svg.selectAll(".circle2")
+        .data(nRadius1)
+        .join("circle")
+        .attr("class", "circle2")
     .attr("cx", (d) => {
       return projection([d.Long, d.Lat])[0];
     })
@@ -150,25 +171,8 @@ var canadaFinal = freqData[freqData.length - 14];
     .duration(500)
     .attr("r", d => rScale(d.Dose2))
     .style("fill", "rgb(217,91,67)")
-    .style("opacity", 0.4)
+    .style("opacity", 0.8)
     .style("stroke", "black")
-    
-    
-    // svg.selectAll("circle")
-    //     .data(nRadius)
-    //     .join("circle")
-    // .attr("cx", (d) => {
-    //   return projection([d.Long, d.Lat])[0];
-    // })
-    // .attr("cy", d => {
-    //   return projection([d.Long, d.Lat])[1];
-    // })
-    // .transition()
-    // .duration(500)
-    // .attr("r", d => rScale(d.Dose1))
-    // .style("fill", "rgb(217,91,67)")
-    // .style("opacity", 0.8)
-    // .style("stroke", "black")
     
     //circles.exit().remove();
     
