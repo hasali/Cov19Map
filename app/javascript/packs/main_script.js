@@ -103,7 +103,8 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
   console.log([...d3.group(freqData, d => d.Date)][0]);
 
-  var canadaFinal = freqData[freqData.length - 14];
+  //console.log('promise data: ',promise);
+var canadaFinal = freqData[freqData.length - 14];
 
   var rScale = d3.scaleLinear()
     .domain([0, canadaFinal.DoseTotal])
@@ -111,18 +112,15 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
   
   /*-----------------Draw Circle Markers----------------*/
-  svg.selectAll("circle")
-      .data(freqData)
-      .join("circle")
-      .attr("cx", (d) => {
-        return projection([d.Long, d.Lat])[0];
-      })
-      .attr("cy", d => {
-        return projection([d.Long, d.Lat])[1];
-      })
+  
+      
   // Create Date slider and draw circles.
+  var c1 = d3.select("#c1");
+  var c1 = d3.select("#c2");
+  
   d3.select("#nRadius").on("input", function () {
     update(+this.value);
+    
   });
 
   update(11);
@@ -137,46 +135,66 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
       d3.select("#value")
         .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());
+        
     })
-    var circle = svg.selectAll("circle")
-      .data(nRadius);
-
-    circle.join("circle")
-      // .attr("cx", (d) => {
-      //   return projection([d.Long, d.Lat])[0];
-      // })
-      // .attr("cy", d => {
-      //   return projection([d.Long, d.Lat])[1];
-      // })
-      .transition()
-      .duration(500)
-      .attr("r", d => rScale(d.Dose1))
-      .style("fill", "rgb(217,91,67)")
-      .style("opacity", 0.4)
-      .style("stroke", "black")
-
-    // circle.join("circle")
+    //circles.exit().remove();
+    svg.select("#c1")
+     .data(nRadius)  
+    .attr("cx", (d) => {
+      return projection([d.Long, d.Lat])[0];
+    })
+    .attr("cy", d => {
+      return projection([d.Long, d.Lat])[1];
+    })
+    .transition()
+    .duration(500)
+    .attr("r", d => rScale(d.Dose2))
+    .style("fill", "rgb(217,91,67)")
+    .style("opacity", 0.4)
+    .style("stroke", "black")
+    
+    
+    // svg.selectAll("circle")
+    //     .data(nRadius)
+    //     .join("circle")
     // .attr("cx", (d) => {
     //   return projection([d.Long, d.Lat])[0];
     // })
     // .attr("cy", d => {
     //   return projection([d.Long, d.Lat])[1];
     // })
-    circle.join("circle")
-      .transition()
-      .duration(500)
-      .attr("r", d => rScale(d.Dose2))
-      .style("fill", "rgb(217,91,67)")
-      .style("opacity", 0.8)
-      .style("stroke", "black")
-
-
-
-
+    // .transition()
+    // .duration(500)
+    // .attr("r", d => rScale(d.Dose1))
+    // .style("fill", "rgb(217,91,67)")
+    // .style("opacity", 0.8)
+    // .style("stroke", "black")
+    
+    //circles.exit().remove();
+    
 
     d3.select("#nRadius").property("value", nIndex);
   }
+  // function addCircles(){
+  //   d3.select(this).selectAll("circle")
+  //     .data(freqData)
+  //     .join("circle")
+  //     .attr("cx", (d) => {
+  //       return projection([d.Long, d.Lat])[0];
+  //     })
+  //     .attr("cy", d => {
+  //       return projection([d.Long, d.Lat])[1];
+  //     })
+  //     .transition()
+  //     .duration(500)
+  //     .attr("r", d => rScale(d.Dose2))
+  //     .style("fill", "rgb(217,91,67)")
+  //     .style("opacity", 0.8)
+  //     .style("stroke", "black")
+
+  // }
 });
+ 
 
 let mouseover = d => {
 
