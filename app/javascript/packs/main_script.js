@@ -54,8 +54,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .attr("class", "map_province")
     .attr("d", path)
     .on("mouseover", mouseover)
-    .on("mouseout", mouseout)
-    .on("click", clicked)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave)
 
   // add the mesh/path between provinces
   svg.append("path")
@@ -63,7 +63,16 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .attr("class", "map_mesh")
     .attr("d", path);
 });
-
+var Tooltip = d3.select("svg")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 1)
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+    
 /*-----------------------------LOAD DATA----------------------------------*/
 
 var freqData;
@@ -130,14 +139,13 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   function update(nIndex) {
     //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
     var nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
-    var nRadius2 = [...d3.group(freqData, d => d.Date)][nIndex][1];
+    
 
     nRadius1.forEach(d => {
-
       d3.select("#value")
-        .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());
-        
+        .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());  
     })
+
     //circles.exit().remove();
     svg.selectAll(".circle1")
      .data(nRadius1)  
@@ -190,40 +198,35 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     .attr("r", d => rScale(d.Dose3))
     .style("fill", "rgb(217,91,67)")
     .style("opacity", 1)
-    .style("stroke", "black")
-
+    .style("stroke", "black")  
     d3.select("#nRadius").property("value", nIndex);
+    
   }
-  // function addCircles(){
-  //   d3.select(this).selectAll("circle")
-  //     .data(freqData)
-  //     .join("circle")
-  //     .attr("cx", (d) => {
-  //       return projection([d.Long, d.Lat])[0];
-  //     })
-  //     .attr("cy", d => {
-  //       return projection([d.Long, d.Lat])[1];
-  //     })
-  //     .transition()
-  //     .duration(500)
-  //     .attr("r", d => rScale(d.Dose2))
-  //     .style("fill", "rgb(217,91,67)")
-  //     .style("opacity", 0.8)
-  //     .style("stroke", "black")
 
-  // }
+  
 });
- 
 
-let mouseover = d => {
-
-  mapLabel.text(d.srcElement.__data__.properties.name) // remove suffix id from name
+var mouseover = function(event, d) {
+  Tooltip.style("opacity", 1)
 }
-
-function mouseout(d) {
-  mapLabel.text("")  // remove out name
+var mousemove = function(event, d) {
+  Tooltip
+    .html(d.Dose1 + "<br>" + "Dose 2 " + d.Dose2 + "<br>" + "Dose 3 " + d.Dose3)
+    .style("left", (event.x)/2 + "px")
+    .style("top", (event.y)/2 - 30 + "px")
 }
-
-function clicked(d) {
-  //Much Later
+var mouseleave = function(event, d) {
+  Tooltip.style("opacity", 0)
 }
+// let mouseover = d => {
+
+//   mapLabel.text(d.srcElement.__data__.properties.name) // remove suffix id from name
+// }
+
+// function mouseout(d) {
+//   mapLabel.text("")  // remove out name
+// }
+
+// function clicked(d) {
+//   //Much Later
+// }
