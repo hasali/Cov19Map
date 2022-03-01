@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "../../app/assets/stylesheets/provinces.scss"
+    ],
+    "names": [],
+    "file": "provinces.css"
+}

@@ -104,7 +104,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   console.log(d3.groups(freqData, d => d.Date));
 
   //console.log('promise data: ',promise);
-var canadaFinal = freqData[freqData.length - 14];
+  var canadaFinal = freqData[freqData.length - 14];
 
   var rScale = d3.scaleLinear()
     .domain([0, canadaFinal.DoseTotal])
@@ -153,7 +153,7 @@ var canadaFinal = freqData[freqData.length - 14];
     .duration(500)
     .attr("r", d => rScale(d.Dose1))
     .style("fill", "rgb(217,91,67)")
-    .style("opacity", 0.4)
+    .style("opacity", 0.2)
     .style("stroke", "black")
     
     
@@ -171,11 +171,26 @@ var canadaFinal = freqData[freqData.length - 14];
     .duration(500)
     .attr("r", d => rScale(d.Dose2))
     .style("fill", "rgb(217,91,67)")
-    .style("opacity", 0.8)
+    .style("opacity", 0.6)
     .style("stroke", "black")
     
     //circles.exit().remove();
-    
+    svg.selectAll(".circle3")
+        .data(nRadius1)
+        .join("circle")
+        .attr("class", "circle3")
+    .attr("cx", (d) => {
+      return projection([d.Long, d.Lat])[0];
+    })
+    .attr("cy", d => {
+      return projection([d.Long, d.Lat])[1];
+    })
+    .transition()
+    .duration(500)
+    .attr("r", d => rScale(d.Dose3))
+    .style("fill", "rgb(217,91,67)")
+    .style("opacity", 1)
+    .style("stroke", "black")
 
     d3.select("#nRadius").property("value", nIndex);
   }
