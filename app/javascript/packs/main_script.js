@@ -53,9 +53,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .join("path")
     .attr("class", "map_province")
     .attr("d", path)
-    .on("mouseover", mouseover)
-    .on("mousemove", mousemove)
-    .on("mouseleave", mouseleave)
+    
 
   // add the mesh/path between provinces
   svg.append("path")
@@ -63,15 +61,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .attr("class", "map_mesh")
     .attr("d", path);
 });
-var Tooltip = d3.select("svg")
-    .append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 1)
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "2px")
-    .style("border-radius", "5px")
-    .style("padding", "5px")
+
     
 /*-----------------------------LOAD DATA----------------------------------*/
 
@@ -119,7 +109,15 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     .domain([0, canadaFinal.DoseTotal])
     .range([5, 400]);
 
-  
+    var Tooltip = d3.select("wrapper")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0)
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
   /*-----------------Draw Circle Markers----------------*/
   
       
@@ -134,7 +132,19 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
   update(11);
 
- 
+  var mouseover = function() {
+    Tooltip.transition().duration(200).style("opacity", 1)
+  }
+  var mousemove = function(event,d) {
+    const[x, y] = d3.pointer(event);
+    Tooltip
+      .html(d.Dose1 + "<br>" + "Dose 2 " + d.Dose2 + "<br>" + "Dose 3 " + d.Dose3)
+      .style("left", (event.x) + "px")
+      .style("top", (event.y) - 30 + "px")
+  }
+  var mouseleave = function() {
+    Tooltip.style("opacity", 0)
+  }
 
   function update(nIndex) {
     //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
@@ -157,6 +167,9 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     .attr("cy", d => {
       return projection([d.Long, d.Lat])[1];
     })
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave)
     .transition()
     .duration(500)
     .attr("r", d => rScale(d.Dose1))
@@ -181,7 +194,9 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     .style("fill", "rgb(217,91,67)")
     .style("opacity", 0.6)
     .style("stroke", "black")
-    
+    // .on("mouseover", mouseover)
+    // .on("mousemove", mousemove)
+    // .on("mouseleave", mouseleave)
     //circles.exit().remove();
     svg.selectAll(".circle3")
         .data(nRadius1)
@@ -199,25 +214,18 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     .style("fill", "rgb(217,91,67)")
     .style("opacity", 1)
     .style("stroke", "black")  
+    // .on("mouseover", mouseover)
+    // .on("mousemove", mousemove)
+    // .on("mouseleave", mouseleave)
+    
     d3.select("#nRadius").property("value", nIndex);
     
   }
-
+  
   
 });
 
-var mouseover = function(event, d) {
-  Tooltip.style("opacity", 1)
-}
-var mousemove = function(event, d) {
-  Tooltip
-    .html(d.Dose1 + "<br>" + "Dose 2 " + d.Dose2 + "<br>" + "Dose 3 " + d.Dose3)
-    .style("left", (event.x)/2 + "px")
-    .style("top", (event.y)/2 - 30 + "px")
-}
-var mouseleave = function(event, d) {
-  Tooltip.style("opacity", 0)
-}
+
 // let mouseover = d => {
 
 //   mapLabel.text(d.srcElement.__data__.properties.name) // remove suffix id from name
