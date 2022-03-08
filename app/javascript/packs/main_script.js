@@ -64,15 +64,15 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
 
     
 /*-----------------------------LOAD DATA----------------------------------*/
-var Tooltip = d3.select(".wrapper")
-.append("div")
-.attr("class", "tooltip")
-.style("opacity", 1)
-.style("background-color", "white")
-.style("border", "solid")
-.style("border-width", "2px")
-.style("border-radius", "5px")
-.style("padding", "5px")
+// var Tooltip = d3.select(".wrapper")
+// .append("div")
+// .attr("class", "tooltip")
+// .style("opacity", 1)
+// .style("background-color", "white")
+// .style("border", "solid")
+// .style("border-width", "2px")
+// .style("border-radius", "5px")
+// .style("padding", "5px")
 var freqData;
 Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
@@ -131,11 +131,11 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   update(11);
 
   var mouseover = function(event, d) {
-    Tooltip.transition().duration(200).style("opacity", 1)
-    Tooltip
-      .html("Dose 1: " + d.Dose1 + "<br>" + "Dose 2: " + d.Dose2 + "<br>" + "Dose 3: " + d.Dose3)
-      .style("left", d3.select(this).attr("cx")/2 + 500 + "px")
-      .style("top", d3.select(this).attr("cy")/2  + 250 + "px")
+    // Tooltip.transition().duration(200).style("opacity", 1)
+    // Tooltip
+    //   .html("Dose 1: " + d.Dose1 + "<br>" + "Dose 2: " + d.Dose2 + "<br>" + "Dose 3: " + d.Dose3)
+    //   .style("left", d3.select(this).attr("cx")/2 + 500 + "px")
+    //   .style("top", d3.select(this).attr("cy")/2  + 250 + "px")
   }
   var mousemove = function(event,d) {
     
@@ -143,7 +143,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     
   }
   var mouseleave = function() {
-    Tooltip.style("opacity", 0)
+    // Tooltip.style("opacity", 0)
   }
 
   function update(nIndex) {
