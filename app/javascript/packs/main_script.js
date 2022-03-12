@@ -14,7 +14,7 @@ var projection = d3.geoAlbers();
 
 var path = d3.geoPath()
   .projection(projection);
-//use 'g'?
+
 var svg = d3.select(".wrapper").append("svg")
   .attr("width", mapWidth)
   .attr("height", mapHeight);
@@ -24,6 +24,8 @@ var mapLabel = svg.append("text")
   .attr("x", 0)
   .attr("class", "map_province_name")
 
+
+0               
 /*--------------------------------DRAW MAP!----------------------------------*/
 
 // load TopoJSON file of Canada
@@ -64,7 +66,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
 
     
 /*-----------------------------LOAD DATA----------------------------------*/
-var Tooltip = d3.select(".stats")
+
+
 
 var freqData;
 Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
@@ -102,13 +105,16 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   console.log("freqData", freqData);
 
   console.log(d3.groups(freqData, d => d.Date));
+  var legendText = ["hello 1"+freqData.Dose1, "hello 2 "+freqData.Dose2,"hello 3"+freqData.Dose3];
 
+  
+  var legendColor = ["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)"];
   //console.log('promise data: ',promise);
   var canadaFinal = freqData[freqData.length - 14];
 
   var rScale = d3.scaleLinear()
     .domain([0, canadaFinal.DoseTotal])
-    .range([5, 400]);
+    .range([0, 400]);
 
    
   /*-----------------Draw Circle Markers----------------*/
@@ -122,12 +128,29 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   });
 
   update(11);
+  var statsBar = d3.select(".stats")
+                .append('svg')
+                
+                .attr('width', 100)
+                .attr('height', 200)
+                .selectAll('g')
+                .data(legendColor)
+                .join('g')
+                .attr("transform", function(d, i) { return "translate(0," + i * 40 + ")"; });
 
+  statsBar.append('rect')
+          .attr('width', 20)
+          .attr('height', 20)
+          .style('fill', (d,i)=>{ return legendColor[i]});
+          
   var mouseover = function(event, d) {
-    Tooltip.transition().duration(200).style("opacity", 1)
-    Tooltip
-      .html("Dose 1: " + d.Dose1 + "<br>" + "Dose 2: " + d.Dose2 + "<br>" + "Dose 3: " + d.Dose3)
-    
+    statsBar.transition().duration(200).style("opacity", 1)
+    statsBar.append("text")
+  		  .data(legendText)
+      	  .attr("x", 24)
+      	  .attr("y", 9)
+      	  .attr("dy", ".35em")
+      	  .text(function(d) { return d; });
   }
   var mousemove = function(event,d) {
     
