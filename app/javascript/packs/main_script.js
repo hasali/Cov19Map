@@ -105,10 +105,11 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   console.log("freqData", freqData);
 
   console.log(d3.groups(freqData, d => d.Date));
-  var legendText = ["hello 1"+freqData.Dose1, "hello 2 "+freqData.Dose2,"hello 3"+freqData.Dose3];
+  var legendText = [];
 
-  
-  var legendColor = ["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)"];
+  console.log("legend text", legendText);
+  var legendColor = ["rgb(217,91,67)","rgb(217,91,67)","rgb(217,91,67)"];
+  var legendOpacity = [0.2,0.6,0.9];
   //console.log('promise data: ',promise);
   var canadaFinal = freqData[freqData.length - 14];
 
@@ -129,8 +130,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
   update(11);
   var statsBar = d3.select(".stats")
-                .append('svg')
-                
+                .append('svg')       
                 .attr('width', 100)
                 .attr('height', 200)
                 .selectAll('g')
@@ -141,22 +141,23 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   statsBar.append('rect')
           .attr('width', 20)
           .attr('height', 20)
-          .style('fill', (d,i)=>{ return legendColor[i]});
-          
+          .style('opacity', (d,i) => {return legendOpacity[i]} )
+          .style('fill', (d,i) => { return legendColor[i]});
+  
+
   var mouseover = function(event, d) {
-    statsBar.transition().duration(200).style("opacity", 1)
+
+     legendText = [d.Dose1,d.Dose2,d.Dose3];
+    
+    //statsBar.transition().duration(200).style("opacity", 1)
     statsBar.append("text")
-  		  .data(legendText)
-      	  .attr("x", 24)
+  		    .data(legendText)
+      	  .attr("x", 30)
       	  .attr("y", 9)
       	  .attr("dy", ".35em")
-      	  .text(function(d) { return d; });
+      	  .text((d)=>{return d});
   }
-  var mousemove = function(event,d) {
-    
-    
-    
-  }
+
   var mouseleave = function() {
     // Tooltip.style("opacity", 0)
   }
@@ -183,7 +184,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
       return projection([d.Long, d.Lat])[1];
     })
     .on("mouseover", mouseover)
-    .on("mousemove", mousemove)
+   
     .on("mouseleave", mouseleave)
     .transition()
     .duration(500)
