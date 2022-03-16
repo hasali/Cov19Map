@@ -4,6 +4,8 @@ import * as d3 from "d3"
 const _ = require("lodash");
 const parseTime = d3.timeParse("%Y-%m-%d");
 
+var formatPercent = d3.format(".3s");
+var freqData;
 var dataFiles = ['/vaccinations.csv', '/prov_loc.csv']
 var mapWidth = 900,
   mapHeight = 600;
@@ -69,7 +71,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
 
 
 
-var freqData;
+
 Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
 
   //Left Outer Join province location data onto province vaccine data
@@ -143,23 +145,35 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
           .attr('height', 20)
           .style('opacity', (d,i) => {return legendOpacity[i]} )
           .style('fill', (d,i) => { return legendColor[i]});
+          
   
+  statsBar.append('text')
+  
+          .text(0)
+          .attr("x", 30)
+      	  .attr("y", 9)
+      	  .attr("dy", ".35em")
+          .style("color", "white");
 
   var mouseover = function(event, d) {
 
-     legendText = [d.Dose1,d.Dose2,d.Dose3];
-    
+     
+    legendText = [d.Dose1,d.Dose2,d.Dose3];
     //statsBar.transition().duration(200).style("opacity", 1)
-    statsBar.append("text")
-  		    .data(legendText)
-      	  .attr("x", 30)
-      	  .attr("y", 9)
-      	  .attr("dy", ".35em")
-      	  .text((d)=>{return d});
+    statsBar.select("text")         
+          .data(legendText)   
+          .transition()
+          .duration(500)
+          // .tween("text", tweenText((d)=>{return +d}));
+      	  .tween("text",(d)=>{
+            var i = d3.interpolateRound(+this.textContent, d);
+            return (t)=>{
+               this.textContent=i(t);
+            }});
   }
 
   var mouseleave = function() {
-    // Tooltip.style("opacity", 0)
+    
   }
 
   function update(nIndex) {
@@ -240,7 +254,19 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   
   
 });
+function tweenText( newValue ) {
+  console.log(newValue);
+  return function() {
+    // get current value as starting point for tween animation
+    var currentValue = +this.textContent;
+    // create interpolator and do not show nasty floating numbers
+    var i = d3.interpolateRound( currentValue, +newValue );
 
+    return function(t) {
+      this.textContent = i(t);
+    };
+  }
+}
 
 // let mouseover = d => {
 
