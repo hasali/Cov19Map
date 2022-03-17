@@ -120,17 +120,12 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     .range([0, 400]);
 
    
-  /*-----------------Draw Circle Markers----------------*/
-  
+ 
+  /*-----------------------Legend----------------------------*/
       
   // Create Date slider and draw circles.
   
-  d3.select("#nRadius").on("input", function () {
-    update(+this.value);
-    
-  });
-
-  update(11);
+ 
   var statsBar = d3.select(".stats")
                 .append('svg')       
                 .attr('width', 100)
@@ -141,41 +136,54 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
                 .attr("transform", function(d, i) { return "translate(0," + i * 40 + ")"; });
 
   statsBar.append('rect')
-          .attr('width', 20)
-          .attr('height', 20)
+          .attr('width', 17)
+          .attr('height', 17)
           .style('opacity', (d,i) => {return legendOpacity[i]} )
           .style('fill', (d,i) => { return legendColor[i]});
           
   
   statsBar.append('text')
-  
+          .attr('class', 'dose-text')
           .text(0)
           .attr("x", 30)
       	  .attr("y", 9)
       	  .attr("dy", ".35em")
-          .style("color", "white");
-
-  var mouseover = function(event, d) {
-
-     
+          .style('fill', 'white');
+  
+ 
+  console.log("default",statsBar.selectAll("text.dose-text").text());       
+  var mouseover = function(event,d) {  
     legendText = [d.Dose1,d.Dose2,d.Dose3];
-    //statsBar.transition().duration(200).style("opacity", 1)
+    console.log("mouseover",statsBar.selectAll("text.dose-text").text()); 
+
     statsBar.select("text")         
           .data(legendText)   
           .transition()
-          .duration(500)
-          // .tween("text", tweenText((d)=>{return +d}));
-      	  .tween("text",(d)=>{
-            var i = d3.interpolateRound(+this.textContent, d);
-            return (t)=>{
-               this.textContent=i(t);
-            }});
+          .duration(3000)
+          .textTween((d)=>{
+            return d3.interpolateRound(+statsBar.selectAll("text.dose-text").text(),d);
+          })
   }
 
-  var mouseleave = function() {
+  var mouseout = function(event, d) {
     
+    statsBar.select("text")
+            
+            .transition()
+            .duration(3000)
+            .textTween(()=>{
+              return d3.interpolateRound(statsBar.selectAll("text.dose-text").text(), 0);
+            });
   }
+   /*-----------------Draw Circle Markers----------------*/
 
+   d3.select("#nRadius").on("input", function () {
+    update(+this.value);
+    
+  });
+
+  update(11);
+  //Slider and map circle marker functionality. 
   function update(nIndex) {
     //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
     var nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
@@ -199,7 +207,7 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     })
     .on("mouseover", mouseover)
    
-    .on("mouseleave", mouseleave)
+    .on("mouseout", mouseout)
     .transition()
     .duration(500)
     .attr("r", d => rScale(d.Dose1))
