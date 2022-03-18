@@ -154,25 +154,24 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   console.log("default",statsBar.selectAll("text.dose-text").text());       
   var mouseover = function(event,d) {  
     legendText = [d.Dose1,d.Dose2,d.Dose3];
-    console.log("mouseover",statsBar.selectAll("text.dose-text").text()); 
+    //console.log("mouseover",statsBar.selectAll("text.dose-text").textContent); 
 
-    statsBar.select("text")         
+    statsBar.select("text.dose-text")         
           .data(legendText)   
           .transition()
-          .duration(3000)
-          .textTween((d)=>{
-            return d3.interpolateRound(+statsBar.selectAll("text.dose-text").text(),d);
-          })
+          .duration(2000)
+          //.textTween((d,i)=>{return d3.interpolateRound()})
+           .tween("text", (d,i)=>{return tweenText(d)[i]});
   }
 
   var mouseout = function(event, d) {
     
-    statsBar.select("text")
+    statsBar.selectAll("text.dose-text")
             
             .transition()
-            .duration(3000)
+            .duration(2000)
             .textTween(()=>{
-              return d3.interpolateRound(statsBar.selectAll("text.dose-text").text(), 0);
+              return d3.interpolateRound(statsBar.select("text.dose-text").text(), 0);
             });
   }
    /*-----------------Draw Circle Markers----------------*/
@@ -260,21 +259,22 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     
   }
   
+  function tweenText( newValue ) {
+    console.log('test',newValue);
+    return function() {
+      // get current value as starting point for tween animation
+      var currentValue = statsBar.select("text.dose-text").text();
+      console.log("test 2", currentValue);
+      // create interpolator and do not show nasty floating numbers
+      var i = d3.interpolateRound( +currentValue, newValue );
   
-});
-function tweenText( newValue ) {
-  console.log(newValue);
-  return function() {
-    // get current value as starting point for tween animation
-    var currentValue = +this.textContent;
-    // create interpolator and do not show nasty floating numbers
-    var i = d3.interpolateRound( currentValue, +newValue );
-
-    return function(t) {
-      this.textContent = i(t);
-    };
+      return function(t) {
+        statsBar.select("text.dose-text").text(()=>{return formatPercent(i(t))});
+      };
+    }
   }
-}
+});
+
 
 // let mouseover = d => {
 
