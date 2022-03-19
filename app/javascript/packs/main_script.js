@@ -154,24 +154,32 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
   console.log("default",statsBar.selectAll("text.dose-text").text());       
   var mouseover = function(event,d) {  
     legendText = [d.Dose1,d.Dose2,d.Dose3];
-    //console.log("mouseover",statsBar.selectAll("text.dose-text").textContent); 
+    console.log("mouseover",statsBar.selectAll("text.dose-text").text()); 
 
     statsBar.select("text.dose-text")         
           .data(legendText)   
           .transition()
-          .duration(2000)
-          //.textTween((d,i)=>{return d3.interpolateRound()})
-           .tween("text", (d,i)=>{return tweenText(d)[i]});
+          .duration(500)
+          // .tween("text", function(d){
+          //   var i = d3.interpolateRound(+this.textContent, d);
+          //   return function(t){
+          //     d3.select(this).text(formatPercent(i(t)))
+          //   }
+          // })
+          .textTween(function(d){
+            return d3.interpolateRound(+this.textContent,d);
+          });
+          //.textTween((d,i)=>{return tweenText(d)[i]});
   }
 
   var mouseout = function(event, d) {
-    
-    statsBar.selectAll("text.dose-text")
-            
+    legendText = [d.Dose1,d.Dose2,d.Dose3];
+    statsBar.selectAll("text.dose-text") 
+            //.data(legendText)
             .transition()
-            .duration(2000)
-            .textTween(()=>{
-              return d3.interpolateRound(statsBar.select("text.dose-text").text(), 0);
+            .duration(500)
+            .textTween(function(){
+              return d3.interpolateRound(+this.textContent, 0);
             });
   }
    /*-----------------Draw Circle Markers----------------*/
@@ -263,15 +271,16 @@ Promise.all(dataFiles.map(url => d3.csv(url))).then(data => {
     console.log('test',newValue);
     return function() {
       // get current value as starting point for tween animation
-      var currentValue = statsBar.select("text.dose-text").text();
+      var currentValue = 0;//statsBar.select("text.dose-text").text();
       console.log("test 2", currentValue);
       // create interpolator and do not show nasty floating numbers
-      var i = d3.interpolateRound( +currentValue, newValue );
-  
+      var i = d3.interpolateRound( currentValue, newValue );
+      
       return function(t) {
+        console.log("test 2", currentValue);
         statsBar.select("text.dose-text").text(()=>{return formatPercent(i(t))});
-      };
-    }
+      };  
+    } 
   }
 });
 
