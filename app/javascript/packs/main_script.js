@@ -29,7 +29,45 @@ var mapLabel = svg.append("text")
 /*--------------------------------DRAW MAP!----------------------------------*/
 
 // load TopoJSON file of Canada
-d3.json("/canadaprovtopo.json").then(function (canada) {
+// d3.json("/canadaprovtopo.json").then(function (canada) {
+//   //if (error) throw error;
+
+//   var provinces = topojson.feature(canada, canada.objects.canadaprov);
+//   console.log("canada topo:",canada);
+//   // set default projection values 
+//   projection
+//     .scale(1)
+//     .translate([0, 0]);
+
+//   // creates bounding box and helps with projection and scaling
+//   var b = path.bounds(provinces),
+//     s = .95 / Math.max((b[1][0] - b[0][0]) / mapWidth, (b[1][1] - b[0][1]) / mapHeight),
+//     t = [(mapWidth - s * (b[1][0] + b[0][0])) / 2, (mapHeight - s * (b[1][1] + b[0][1])) / 2];
+
+//   // set project with bounding box data
+//   projection
+//     .scale(s)
+//     .translate(t);
+
+//   // get individual provinces
+//   svg.selectAll("path")
+//     .data(provinces.features)
+//     .join("path")
+//     .attr("class", "map_province")
+//     .attr("d", path)
+    
+
+//   // add the mesh/path between provinces
+//   svg.append("path")
+//     .datum(topojson.mesh(canada, canada.objects.canadaprov, function (a, b) { return a !== b; }))
+//     .attr("class", "map_mesh")
+//     .attr("d", path);
+
+// });
+
+/*-----------------------------LOAD DATA----------------------------------*/
+Promise.all(dataFiles.map(url => d3.csv(url)))
+ .then(d3.json("/canadaprovtopo.json").then(function (canada) {
   //if (error) throw error;
 
   var provinces = topojson.feature(canada, canada.objects.canadaprov);
@@ -63,10 +101,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .attr("class", "map_mesh")
     .attr("d", path);
 
-});
-
-/*-----------------------------LOAD DATA----------------------------------*/
-Promise.all(dataFiles.map(url => d3.csv(url)), d3.json(provTopoData)).then((data, topoData) => {
+})).then((data) => {
 
   //Left Outer Join province location data onto province vaccine data
   data[0].forEach(main => {
@@ -97,37 +132,8 @@ Promise.all(dataFiles.map(url => d3.csv(url)), d3.json(provTopoData)).then((data
       Long: +d.long
     };
   })
-  console.log(topoData);
-  // var provinces = topojson.feature(data[2], data[2].objects.canadaprov);
-
-  // // set default projection values 
-  // projection
-  //   .scale(1)
-  //   .translate([0, 0]);
-
-  // // creates bounding box and helps with projection and scaling
-  // var b = path.bounds(provinces),
-  //   s = .95 / Math.max((b[1][0] - b[0][0]) / mapWidth, (b[1][1] - b[0][1]) / mapHeight),
-  //   t = [(mapWidth - s * (b[1][0] + b[0][0])) / 2, (mapHeight - s * (b[1][1] + b[0][1])) / 2];
-
-  // // set project with bounding box data
-  // projection
-  //   .scale(s)
-  //   .translate(t);
-
-  // // get individual provinces
-  // svg.selectAll("path")
-  //   .data(provinces.features)
-  //   .join("path")
-  //   .attr("class", "map_province")
-  //   .attr("d", path)
-    
-
-  // // add the mesh/path between provinces
-  // svg.append("path")
-  //   .datum(topojson.mesh(canada, canada.objects.canadaprov, function (a, b) { return a !== b; }))
-  //   .attr("class", "map_mesh")
-  //   .attr("d", path);
+ 
+ 
   
 }).then(()=>{
   console.log("freqData", freqData);
@@ -193,9 +199,10 @@ Promise.all(dataFiles.map(url => d3.csv(url)), d3.json(provTopoData)).then((data
       });
   }
   /*-----------------Draw Circle Markers----------------*/
-  svg.selectAll("path")
-  .on("mouseover", mouseover)
-  .on("mouseout", mouseout);
+  // svg.selectAll("path")
+  // .data(freqData)
+  // .on("mouseover", mouseover)
+  // .on("mouseout", mouseout);
 
   d3.select("#nRadius").on("input", function () {
     update(+this.value);
@@ -212,7 +219,10 @@ Promise.all(dataFiles.map(url => d3.csv(url)), d3.json(provTopoData)).then((data
       d3.select("#value")
         .text(d.Date.toLocaleString('default', { month: 'long' }) + " " + d.Date.getFullYear());
     })
-
+    svg.selectAll("path")
+  .data(nRadius1)
+  .on("mouseover", mouseover)
+  .on("mouseout", mouseout);
     //circles.exit().remove();
     svg.selectAll(".circle1")
       .data(nRadius1)
@@ -274,9 +284,6 @@ Promise.all(dataFiles.map(url => d3.csv(url)), d3.json(provTopoData)).then((data
     // .on("mouseleave", mouseleave)
 
     d3.select("#nRadius").property("value", nIndex);
-
-  }
- 
-
-})
+    }
+    });
   
