@@ -222,13 +222,10 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
   function mouseover (event,d) {
     for(var i=0; i<nRadius1.length-1;i++){
       if(nRadius1[i].Province == d.properties.name){
-        console.log(nRadius1[i]);
         legendText = [nRadius1[i].Dose1, nRadius1[i].Dose2, nRadius1[i].Dose3];
        }
     }
-  
-   console.log(legendText);
-   console.log(nRadius1);
+ 
    statsBar.select("text.dose-text")
      .data(legendText)
      .transition()
@@ -246,7 +243,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
        return d3.interpolateRound(+this.textContent, 0);
      });
  }
- console.log(nRadius1);
+
  svg.selectAll("path")
  .on("mouseover", mouseover)
  .on("mouseout", mouseout);
