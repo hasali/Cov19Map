@@ -79,7 +79,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .join("path")
     .attr("class", "map_province")
     .attr("d", path)
-    .on("mouseover", mouseover);
+    
 
   // add the mesh/path between provinces
   svg.append("path")
@@ -145,9 +145,12 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
   // .on("mouseout", mouseout);
   update(11);
   //Slider and map circle marker functionality. 
+  var nRadius1;
+  
   function update(nIndex) {
     //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
-    var nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
+    
+    nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
 
     nRadius1.forEach(d => {
       d3.select("#value")
@@ -214,33 +217,39 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     // .on("mouseleave", mouseleave)
 
     d3.select("#nRadius").property("value", nIndex);
+    var mouseover = function () {
+  
+     
+      legendText = [nRadius1.Dose1, nRadius1.Dose2, nRadius1.Dose3];
+      
+      
+    
+      statsBar.select("text.dose-text")
+        .data(legendText)
+        .transition()
+        .duration(500)
+        .textTween(function (d) {
+          return d3.interpolateRound(+this.textContent, d);
+        });
+    }
+    var mouseout = function () {
+    
+      statsBar.selectAll("text.dose-text")
+        .transition()
+        .duration(500)
+        .textTween(function () {
+          return d3.interpolateRound(+this.textContent, 0);
+        });
+    }
+    console.log(nRadius1);
+    svg.selectAll("path")
+    .on("mouseover", mouseover);
   }
+  
+  
 }))
 
-var mouseover = function (event, d) {
-  
-  if(d.properties.name == freqData.Province){
-    legendText = [freqData.Province.Dose1, freqData.Province.Dose2, freqData.Province.Dose3];
-  }
-  
-
-  statsBar.select("text.dose-text")
-    .data(legendText)
-    .transition()
-    .duration(500)
-    .textTween(function (d) {
-      return d3.interpolateRound(+this.textContent, d);
-    });
-}
-var mouseout = function () {
-
-  statsBar.selectAll("text.dose-text")
-    .transition()
-    .duration(500)
-    .textTween(function () {
-      return d3.interpolateRound(+this.textContent, 0);
-    });
-}
-/*-----------------------------LOAD DATA----------------------------------*/
+/*-----------------------------NOTES----------------------------------*/
 
 
+//USE function mouseover()... instead
