@@ -217,35 +217,39 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     // .on("mouseleave", mouseleave)
 
     d3.select("#nRadius").property("value", nIndex);
-    var mouseover = function () {
-  
-     
-      legendText = [nRadius1.Dose1, nRadius1.Dose2, nRadius1.Dose3];
-      
-      
     
-      statsBar.select("text.dose-text")
-        .data(legendText)
-        .transition()
-        .duration(500)
-        .textTween(function (d) {
-          return d3.interpolateRound(+this.textContent, d);
-        });
-    }
-    var mouseout = function () {
-    
-      statsBar.selectAll("text.dose-text")
-        .transition()
-        .duration(500)
-        .textTween(function () {
-          return d3.interpolateRound(+this.textContent, 0);
-        });
-    }
-    console.log(nRadius1);
-    svg.selectAll("path")
-    .on("mouseover", mouseover);
   }
+  function mouseover (event,d) {
+    for(var i=0; i<nRadius1.length-1;i++){
+      if(nRadius1[i].Province == d.properties.name){
+        console.log(nRadius1[i]);
+        legendText = [nRadius1[i].Dose1, nRadius1[i].Dose2, nRadius1[i].Dose3];
+       }
+    }
   
+   console.log(legendText);
+   console.log(nRadius1);
+   statsBar.select("text.dose-text")
+     .data(legendText)
+     .transition()
+     .duration(500)
+     .textTween(function (d) {
+       return d3.interpolateRound(+this.textContent, d);
+     });
+ }
+ var mouseout = function () {
+ 
+   statsBar.selectAll("text.dose-text")
+     .transition()
+     .duration(500)
+     .textTween(function () {
+       return d3.interpolateRound(+this.textContent, 0);
+     });
+ }
+ console.log(nRadius1);
+ svg.selectAll("path")
+ .on("mouseover", mouseover)
+ .on("mouseout", mouseout);
   
 }))
 
