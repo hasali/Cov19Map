@@ -12,6 +12,7 @@ var legendText = [];
 var legendColor = ["rgb(217,91,67)", "rgb(217,91,67)", "rgb(217,91,67)"];
 var legendOpacity = [0.2, 0.6, 0.9];
 var c10 = d3.scaleOrdinal(d3.schemeCategory10);
+var format = d3.format(".3s")
 
 var projection = d3.geoAlbers();
 
@@ -78,8 +79,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .data(provinces.features)
     .join("path")
     .attr("class", "map_province")
-    .attr("d", path)
-    
+    .attr("d", path);
 
   // add the mesh/path between provinces
   svg.append("path")
@@ -132,17 +132,11 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
   /*-----------------------Legend----------------------------*/
 
   /*-----------------Draw Circle Markers----------------*/
-  // svg.selectAll("path")
-  // .on("mouseover", mouseover)
-  // .on("mouseout", mouseout);
 
   d3.select("#nRadius").on("input", function () {
     update(+this.value);
   });
-  // svg.selectAll("path")
 
-  // .on("mouseover", mouseover)
-  // .on("mouseout", mouseout);
   update(11);
   //Slider and map circle marker functionality. 
   var nRadius1;
@@ -151,6 +145,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
     
     nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
+    console.log(nRadius1);
 
     nRadius1.forEach(d => {
       d3.select("#value")
@@ -168,13 +163,14 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
       .attr("cy", d => {
         return projection([d.Long, d.Lat])[1];
       })
-
       .transition()
       .duration(500)
       .attr("r", d => rScale(d.Dose1))
       .style("fill", "rgb(217,91,67)")
       .style("opacity", 0.2)
       .style("stroke", "black")
+      .style("z-index",-1)
+      .style("pointer-events", "none");
 
     svg.selectAll(".circle2")
       .data(nRadius1)
@@ -192,10 +188,9 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
       .style("fill", "rgb(217,91,67)")
       .style("opacity", 0.6)
       .style("stroke", "black")
-    // .on("mouseover", mouseover)
-    // .on("mousemove", mousemove)
-    // .on("mouseleave", mouseleave)
-    //circles.exit().remove();
+      .style("z-index",-1)
+      .style("pointer-events", "none")
+    
     svg.selectAll(".circle3")
       .data(nRadius1)
       .join("circle")
@@ -212,26 +207,25 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
       .style("fill", "rgb(217,91,67)")
       .style("opacity", 1)
       .style("stroke", "black")
-    // .on("mouseover", mouseover)
-    // .on("mousemove", mousemove)
-    // .on("mouseleave", mouseleave)
+      .style("z-index",-1)
+      .style("pointer-events", "none");
 
     d3.select("#nRadius").property("value", nIndex);
     
   }
   function mouseover (event,d) {
-    for(var i=0; i<nRadius1.length-1;i++){
-      if(nRadius1[i].Province == d.properties.name){
+    for(let i=0; i < nRadius1.length; i++){
+      if(nRadius1[i].Province === d.properties.name.normalize("NFD").replace(/\p{Diacritic}/gu, "")){
         legendText = [nRadius1[i].Dose1, nRadius1[i].Dose2, nRadius1[i].Dose3];
        }
     }
- 
    statsBar.select("text.dose-text")
      .data(legendText)
      .transition()
      .duration(500)
      .textTween(function (d) {
-       return d3.interpolateRound(+this.textContent, d);
+       const i = d3.interpolateRound(+this.textContent, d);
+       return function(t){ return format(this.textContent = i(t));};
      });
  }
  var mouseout = function () {
@@ -240,7 +234,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
      .transition()
      .duration(500)
      .textTween(function () {
-       return d3.interpolateRound(+this.textContent, 0);
+       const i = d3.interpolateRound(+this.textContent, 0);
+       return function(t){  format(this.textContent = i(t));};
      });
  }
 
