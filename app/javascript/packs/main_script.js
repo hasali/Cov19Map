@@ -45,7 +45,7 @@ statsBar.append('rect')
 
 statsBar.append('text')
   .attr('class', 'dose-text')
-  .text(0)
+  .text("0")
   .attr("x", 30)
   .attr("y", 9)
   .attr("dy", ".35em")
@@ -217,16 +217,16 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     for(let i=0; i < nRadius1.length; i++){
       if(nRadius1[i].Province === d.properties.name.normalize("NFD").replace(/\p{Diacritic}/gu, "")){
         legendText = [nRadius1[i].Dose1, nRadius1[i].Dose2, nRadius1[i].Dose3];
-       }
+      }
     }
-   statsBar.select("text.dose-text")
+    statsBar.select("text.dose-text")
      .data(legendText)
      .transition()
      .duration(500)
      .textTween(function (d) {
-       const i = d3.interpolateRound(+this.textContent, d);
+       var i = d3.interpolateRound(this.textContent, d);
        return function(t){ return format(this.textContent = i(t));};
-     });
+    });
  }
  var mouseout = function () {
  
@@ -234,14 +234,14 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
      .transition()
      .duration(500)
      .textTween(function () {
-       const i = d3.interpolateRound(+this.textContent, 0);
-       return function(t){  format(this.textContent = i(t));};
+        var i = d3.interpolateRound(this.textContent, 0);
+        return function(t){ return format(this.textContent=i(t))};
      });
  }
 
  svg.selectAll("path")
  .on("mouseover", mouseover)
- .on("mouseout", mouseout);
+ .on("mouseleave", mouseout);
   
 }))
 
