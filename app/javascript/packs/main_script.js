@@ -223,25 +223,24 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
      .data(legendText)
      .transition()
      .duration(500)
-     .textTween(function (d) {
-       var i = d3.interpolateRound(this.textContent, d);
-       return function(t){ return format(this.textContent = i(t));};
-    });
+     .tween("text.dose-text",function(d){
+        const i = d3.interpolateRound(+this.textContent, +d);
+        return function(t){ return format(this.textContent = i(t));};
+     })
  }
- var mouseout = function () {
- 
-   statsBar.selectAll("text.dose-text")
-     .transition()
-     .duration(500)
-     .textTween(function () {
-        var i = d3.interpolateRound(this.textContent, 0);
-        return function(t){ return format(this.textContent=i(t))};
-     });
- }
+  function mouseout() {
+    statsBar.selectAll("text.dose-text")
+      .transition()
+      .duration(500)
+      .tween("text.dose-text",function () {
+        const i = d3.interpolateRound(this.textContent, 0);
+        return function (t) { return format(this.textContent = i(t)) };
+      });
+  }
 
  svg.selectAll("path")
  .on("mouseover", mouseover)
- .on("mouseleave", mouseout);
+ .on("mouseout", mouseout);
   
 }))
 
