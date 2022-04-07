@@ -1,6 +1,19 @@
 import * as d3 from "d3";
 
-d3.json("/ontario.json").then(function () {
+var mapWidth = 900, mapHeight = 600;
+
+var projection = d3.geoAlbers();
+
+var path = d3.geoPath()
+  .projection(projection);
+
+
+
+ function prov(){
+  var svg = d3.select(".prov-wrapper").append("svg")
+  .attr("width", mapWidth)
+  .attr("height", mapHeight);
+  d3.json("/ontario.topojson").then(function () {
     //if (error) throw error;
   
     provinces = topojson.feature(ontario, ontario.Topology.objects);
@@ -33,4 +46,6 @@ d3.json("/ontario.json").then(function () {
       .attr("class", "map_mesh")
       .attr("d", path);
   
-  })
+  })}
+
+  export{prov}

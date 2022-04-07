@@ -1,4 +1,5 @@
 import * as d3 from "d3"
+import {prov} from './ontario'
 
 const _ = require("lodash");
 const parseTime = d3.timeParse("%Y-%m-%d");
@@ -240,8 +241,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
 
  svg.selectAll("path")
  .on("mouseover", mouseover)
- .on("mouseout", mouseout);
-  
+ .on("mouseout", mouseout)
+  .on("click", prov)
 }))
 
 /*-----------------------------NOTES----------------------------------*/
