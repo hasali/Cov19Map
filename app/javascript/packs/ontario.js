@@ -1,23 +1,24 @@
 import * as d3 from "d3";
-
-var mapWidth = 900, mapHeight = 600;
+var provinces;
+var mapWidth = 700, mapHeight = 400;
 
 var projection = d3.geoAlbers();
 
 var path = d3.geoPath()
   .projection(projection);
-
+ 
 
 
  function prov(){
   var svg = d3.select(".prov-wrapper").append("svg")
   .attr("width", mapWidth)
   .attr("height", mapHeight);
-  d3.json("/ontario.topojson").then(function () {
+  d3.json("/canadaprovtopo.json").then(function (ontario) {
     //if (error) throw error;
   
-    provinces = topojson.feature(ontario, ontario.Topology.objects);
+    provinces = topojson.feature(ontario, ontario.objects.canadaprov);
     console.log("ontario topo:", ontario);
+    
     // set default projection values 
     projection
       .scale(1)
@@ -32,7 +33,7 @@ var path = d3.geoPath()
     projection
       .scale(s)
       .translate(t);
-  
+    
     // get individual provinces
     svg.selectAll("path")
       .data(provinces.features)
@@ -42,7 +43,7 @@ var path = d3.geoPath()
   
     // add the mesh/path between provinces
     svg.append("path")
-      .datum(topojson.mesh(ontario, ontario.objects.ontarioprov, function (a, b) { return a !== b; }))
+      .datum(topojson.mesh(ontario, ontario.canadaprov, function (a, b) { return a !== b; }))
       .attr("class", "map_mesh")
       .attr("d", path);
   
