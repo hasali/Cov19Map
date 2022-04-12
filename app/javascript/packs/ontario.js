@@ -13,7 +13,7 @@ var path = d3.geoPath()
   var svg = d3.select(".prov-wrapper").append("svg")
   .attr("width", mapWidth)
   .attr("height", mapHeight);
-  d3.json("/ontario.geojson").then(function (ontario) {
+  d3.json("/convert.json").then(function (ontario) {
     //if (error) throw error;
   
     //provinces = topojson.feature(ontario, ontario.objects.ontario);
