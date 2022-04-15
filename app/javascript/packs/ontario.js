@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-var provinces;
+var regions;
 var mapWidth = 700, mapHeight = 400;
 
 var projection = d3.geoMercator()
@@ -9,6 +9,7 @@ var projection = d3.geoMercator()
 
 var path = d3.geoPath()
   .projection(projection);
+ 
  
 
 
@@ -19,7 +20,7 @@ var path = d3.geoPath()
   d3.json("/ontario2.json").then(function (ontario) {
     //if (error) throw error;
   
-    provinces = topojson.feature(ontario, ontario.objects.HR_035a18a_e);
+    regions = topojson.feature(ontario, ontario.objects.HR_035a18a_e);
     console.log("ontario topo:", ontario);
     
     // set default projection values 
@@ -28,7 +29,7 @@ var path = d3.geoPath()
       .translate([0, 0]);
   
     // creates bounding box and helps with projection and scaling
-    var b = path.bounds(provinces),
+    var b = path.bounds(regions),
       s = .95 / Math.max((b[1][0] - b[0][0]) / mapWidth, (b[1][1] - b[0][1]) / mapHeight),
       t = [(mapWidth - s * (b[1][0] + b[0][0])) / 2, (mapHeight - s * (b[1][1] + b[0][1])) / 2];
   
@@ -37,14 +38,14 @@ var path = d3.geoPath()
       .scale(s)
       .translate(t);
     var g = svg.append("g");
-    // get individual provinces
-    g.append("path")
-      .data(provinces.features)
+    // get individual regions
+    g.selectAll("path")
+      .data(regions.features)
       .join("path")
       .attr("class", "map_province")
       .attr("d", path);
   
-    // add the mesh/path between provinces
+    // add the mesh/path between regions
     g.append("path")
       .datum(topojson.mesh(ontario, ontario.objects.HR_035a18a_e, function (a, b) { return a !== b; }))
       .attr("class", "map_mesh")
