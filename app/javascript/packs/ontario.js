@@ -16,7 +16,9 @@ var path = d3.geoPath()
  function prov(){
   var svg = d3.select(".prov-wrapper").append("svg")
   .attr("width", mapWidth)
-  .attr("height", mapHeight);
+  .attr("height", mapHeight)
+  .attr("transform","translate(200,-400)");
+
   d3.json("/ontario2.json").then(function (ontario) {
     //if (error) throw error;
   
@@ -43,7 +45,8 @@ var path = d3.geoPath()
       .data(regions.features)
       .join("path")
       .attr("class", "map_province")
-      .attr("d", path);
+      .attr("d", path)
+      
   
     // add the mesh/path between regions
     g.append("path")
