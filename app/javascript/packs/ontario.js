@@ -4,15 +4,11 @@ var regions;
 var mapWidth = 700, mapHeight = 400;
 
 var projection = d3.geoMercator()
-.center([0, 5 ])
-.scale(2000);
+;
 
 var path = d3.geoPath()
   .projection(projection);
  
- 
-
-
  function prov(){
   var svg = d3.select(".prov-wrapper").append("svg")
   .attr("width", mapWidth)
@@ -39,6 +35,7 @@ var path = d3.geoPath()
     projection
       .scale(s)
       .translate(t);
+
     var g = svg.append("g");
     // get individual regions
     g.selectAll("path")
