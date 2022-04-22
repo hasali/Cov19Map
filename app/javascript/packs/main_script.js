@@ -8,7 +8,7 @@ var freqData;
 var provinces;
 var dataFiles = ['/vaccinations.csv', '/prov_loc.csv'];
 var provTopoData = "/canadaprovtopo.json";
-var mapWidth = 900, mapHeight = 700;
+var mapWidth = 900, mapHeight = 600;
 var legendText = [];
 var legendColor = ["rgb(217,91,67)", "rgb(217,91,67)", "rgb(217,91,67)"];
 var legendOpacity = [0.2, 0.6, 0.9];
