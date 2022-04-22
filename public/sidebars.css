@@ -4,9 +4,9 @@
   display: flex; 
   flex-wrap: nowrap;
   
-  /* height: 100vh; */
+  height: calc(100vh - 56px); /* 56px is header height */
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 /* .b-example-divider {
