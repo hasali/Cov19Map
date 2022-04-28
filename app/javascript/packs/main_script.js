@@ -1,5 +1,5 @@
 import * as d3 from "d3"
-import {prov} from './ontario'
+import { prov } from './ontario'
 
 const _ = require("lodash");
 const parseTime = d3.timeParse("%Y-%m-%d");
@@ -28,6 +28,8 @@ var mapLabel = svg.append("text")
   .attr("y", 20)
   .attr("x", 0)
   .attr("class", "map_province_name")
+
+
 
 var statsBar = d3.select(".stats")
   .append('svg')
@@ -141,10 +143,10 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
   update(11);
   //Slider and map circle marker functionality. 
   var nRadius1;
-  
+
   function update(nIndex) {
     //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
-    
+
     nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
     console.log(nRadius1);
 
@@ -170,7 +172,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
       .style("fill", "rgb(217,91,67)")
       .style("opacity", 0.2)
       .style("stroke", "black")
-      .style("z-index",-1)
+      .style("z-index", -1)
       .style("pointer-events", "none");
 
     svg.selectAll(".circle2")
@@ -189,9 +191,9 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
       .style("fill", "rgb(217,91,67)")
       .style("opacity", 0.6)
       .style("stroke", "black")
-      .style("z-index",-1)
+      .style("z-index", -1)
       .style("pointer-events", "none")
-    
+
     svg.selectAll(".circle3")
       .data(nRadius1)
       .join("circle")
@@ -208,41 +210,44 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
       .style("fill", "rgb(217,91,67)")
       .style("opacity", 1)
       .style("stroke", "black")
-      .style("z-index",-1)
+      .style("z-index", -1)
       .style("pointer-events", "none");
 
     d3.select("#nRadius").property("value", nIndex);
-    
+
   }
-  function mouseover (event,d) {
-    for(let i=0; i < nRadius1.length; i++){
-      if(nRadius1[i].Province === d.properties.name.normalize("NFD").replace(/\p{Diacritic}/gu, "")){
+  function mouseover(event, d) {
+    for (let i = 0; i < nRadius1.length; i++) {
+      if (nRadius1[i].Province === d.properties.name.normalize("NFD").replace(/\p{Diacritic}/gu, "")) {
         legendText = [nRadius1[i].Dose1, nRadius1[i].Dose2, nRadius1[i].Dose3];
       }
     }
     statsBar.select("text.dose-text")
-     .data(legendText)
-     .transition()
-     .duration(500)
-     .tween("text.dose-text",function(d){
+      .data(legendText)
+      .transition()
+      .duration(500)
+      .tween("text.dose-text", function (d) {
         const i = d3.interpolateRound(+this.textContent, +d);
-        return function(t){ return format(this.textContent = i(t));};
-     })
- }
+        return function (t) { return format(this.textContent = i(t)); };
+      })
+  }
   function mouseout() {
     statsBar.selectAll("text.dose-text")
       .transition()
       .duration(500)
-      .tween("text.dose-text",function () {
+      .tween("text.dose-text", function () {
         const i = d3.interpolateRound(this.textContent, 0);
         return function (t) { return format(this.textContent = i(t)) };
       });
   }
 
- svg.selectAll("path")
- .on("mouseover", mouseover)
- .on("mouseout", mouseout)
-  .on("click", prov)
+  svg.selectAll("path")
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout)
+    .on("click", prov);
+  
+  
+
 }))
 
 /*-----------------------------NOTES----------------------------------*/

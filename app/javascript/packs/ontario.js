@@ -4,33 +4,34 @@ var regions;
 var mapWidth = 700, mapHeight = 400;
 
 var projection = d3.geoMercator()
-;
+  ;
 
 var path = d3.geoPath()
   .projection(projection);
- 
- function prov(){
+
+function prov() {
+
   var svg = d3.select(".prov-wrapper").append("svg")
-  .attr("width", mapWidth)
-  .attr("height", mapHeight)
-  .attr("transform","translate(200,-400)");
+    .attr("width", mapWidth)
+    .attr("height", mapHeight);
+
 
   d3.json("/ontario2.json").then(function (ontario) {
     //if (error) throw error;
-  
+
     regions = topojson.feature(ontario, ontario.objects.HR_035a18a_e);
     console.log("ontario topo:", ontario);
-    
+
     // set default projection values 
     projection
       .scale(1)
       .translate([0, 0]);
-  
+
     // creates bounding box and helps with projection and scaling
     var b = path.bounds(regions),
       s = .95 / Math.max((b[1][0] - b[0][0]) / mapWidth, (b[1][1] - b[0][1]) / mapHeight),
       t = [(mapWidth - s * (b[1][0] + b[0][0])) / 2, (mapHeight - s * (b[1][1] + b[0][1])) / 2];
-  
+
     // set project with bounding box data
     projection
       .scale(s)
@@ -43,14 +44,25 @@ var path = d3.geoPath()
       .join("path")
       .attr("class", "map_province")
       .attr("d", path)
-      
-  
+
+
     // add the mesh/path between regions
     g.append("path")
       .datum(topojson.mesh(ontario, ontario.objects.HR_035a18a_e, function (a, b) { return a !== b; }))
       .attr("class", "map_mesh")
       .attr("d", path);
-  
-  })}
 
-  export{prov}
+    var zoom = d3.zoom()
+      .scaleExtent([1, 8])
+      .on('zoom', function (event) {
+        g.selectAll('path')
+          .attr('transform', event.transform);
+      });
+
+    svg.call(zoom).on('mousedown.zoom', null);
+
+  })
+
+}
+
+export { prov }
