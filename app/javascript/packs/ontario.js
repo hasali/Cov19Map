@@ -53,7 +53,7 @@ function prov() {
       .attr("d", path);
 
     var zoom = d3.zoom()
-      .scaleExtent([1, 8])
+      .scaleExtent([1, 3])
       .on('zoom', function (event) {
         g.selectAll('path')
           .attr('transform', event.transform);

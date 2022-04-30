@@ -240,13 +240,21 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
         return function (t) { return format(this.textContent = i(t)) };
       });
   }
-
+  function circleout(){
+    console.log("hello");
+    svg.selectAll(".circle1").remove();
+    svg.selectAll(".circle2").remove();
+    svg.selectAll(".circle3").remove();
+  }
   svg.selectAll("path")
     .on("mouseover", mouseover)
     .on("mouseout", mouseout)
-    .on("click", prov);
+    .on("click", function(){
+      prov();
+      circleout();
+    });
   
-  
+    
 
 }))
 
