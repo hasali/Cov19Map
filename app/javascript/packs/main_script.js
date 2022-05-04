@@ -251,7 +251,12 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .on("mouseout", mouseout)
     .on("click", function(){
       prov();
-      circleout();
+      d3.selectAll(".circle1")
+        .classed("circleInvisible", true);
+      d3.selectAll(".circle2")
+        .classed("circleInvisible", true);
+      d3.selectAll(".circle3")
+        .classed("circleInvisible", true);
     });
   
     
