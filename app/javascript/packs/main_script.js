@@ -256,7 +256,9 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
         .style("opacity",0.6);
     });
   
-    
+    window.addEventListener("click", function(event) {
+      //d3 change class?
+    });  
 
 }))
 

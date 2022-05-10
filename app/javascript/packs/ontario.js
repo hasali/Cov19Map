@@ -1,10 +1,9 @@
 import * as d3 from "d3";
 
 var regions;
-var mapWidth = 700, mapHeight = 400;
+var mapWidth = 900, mapHeight = 600;
 
-var projection = d3.geoMercator()
-  ;
+var projection = d3.geoMercator();
 
 var path = d3.geoPath()
   .projection(projection);
