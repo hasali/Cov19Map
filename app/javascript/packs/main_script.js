@@ -246,7 +246,7 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .on("click", function(){
       prov();
       d3.selectAll(".circle1")
-        .classed("circleInvisible", true);
+        .classed("circleInvisible", !d3.selectAll(".circle1").classed("circleInvisible"));
       d3.selectAll(".circle2")
         .classed("circleInvisible", true);
       d3.selectAll(".circle3")
@@ -256,9 +256,17 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
         .style("opacity",0.6);
     });
   
-    window.addEventListener("click", function(event) {
-      //d3 change class?
-    });  
+    // window.addEventListener("click", function(event) {
+    //   d3.selectAll(".circle1")
+    //     .classed("circleInvisible", false);
+    //   d3.selectAll(".circle2")
+    //     .classed("circleInvisible", false);
+    //   d3.selectAll(".circle3")
+    //     .classed("circleInvisible", false);
+      
+    //   d3.selectAll("body")
+    //     .style("opacity",1);
+    // });  
 
 }))
 
