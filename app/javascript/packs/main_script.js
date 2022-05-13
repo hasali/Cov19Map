@@ -256,10 +256,9 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
         .style("opacity",0.6);
     });
   
-    // window.addEventListener("click", function(event) {
-    //  check for flag?
-    //  if the right element is clicked...
-    // });  
+    window.addEventListener("click", function(event) {
+     console.log("hello");
+    });  
 
 }))
 
@@ -267,3 +266,9 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
 
 
 //USE function mouseover()... instead
+
+// How to swap data with province for circle?
+
+// On event listener function for prov() that also changes circle
+
+// store data and carry it to slider update as well.
