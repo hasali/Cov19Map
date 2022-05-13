@@ -257,15 +257,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     });
   
     // window.addEventListener("click", function(event) {
-    //   d3.selectAll(".circle1")
-    //     .classed("circleInvisible", false);
-    //   d3.selectAll(".circle2")
-    //     .classed("circleInvisible", false);
-    //   d3.selectAll(".circle3")
-    //     .classed("circleInvisible", false);
-      
-    //   d3.selectAll("body")
-    //     .style("opacity",1);
+    //  check for flag?
+    //  if the right element is clicked...
     // });  
 
 }))
