@@ -145,7 +145,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
   var nRadius1;
 
   function update(nIndex) {
-    //Create new array ordered by date using slider value as index. [1] is to step into sub array in array of objects.
+    //Create new array ordered by date using slider value as index. 
+    //[1] is to step into sub array in array of objects.
 
     nRadius1 = d3.groups(freqData, d => d.Date)[nIndex][1];
     console.log(nRadius1);
@@ -241,9 +242,11 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
       });
   }
   svg.selectAll("path")
+  
     .on("mouseover", mouseover)
     .on("mouseout", mouseout)
-    .on("click", function(){
+    .on("click", function(event,d){
+      console.log('province name: ', d.properties.name);
       prov();
       d3.selectAll(".circle1")
         .classed("circleInvisible", !d3.selectAll(".circle1").classed("circleInvisible"));
@@ -256,9 +259,9 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
         .style("opacity",0.6);
     });
   
-    window.addEventListener("click", function(event) {
-     console.log("hello");
-    });  
+    // window.addEventListener("click", function(event) {
+    //  console.log("hello");
+    // });  
 
 }))
 
