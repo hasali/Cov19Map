@@ -8,14 +8,14 @@ var projection = d3.geoMercator();
 var path = d3.geoPath()
   .projection(projection);
 
-function prov() {
-
+function prov(province) {
+  console.log(province);
   var svg = d3.select(".prov-wrapper").append("svg")
     .attr("width", mapWidth)
     .attr("height", mapHeight);
 
 
-  d3.json("/ontario2.json").then(function (ontario) {
+  d3.json("/"+province+".json").then(function (ontario) {
     //if (error) throw error;
 
     regions = topojson.feature(ontario, ontario.objects.HR_035a18a_e);

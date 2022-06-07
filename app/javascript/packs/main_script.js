@@ -246,8 +246,8 @@ d3.json("/canadaprovtopo.json").then(function (canada) {
     .on("mouseover", mouseover)
     .on("mouseout", mouseout)
     .on("click", function(event,d){
-      console.log('province name: ', d.properties.name);
-      prov();
+      
+      prov(d.properties.name);
       d3.selectAll(".circle1")
         .classed("circleInvisible", !d3.selectAll(".circle1").classed("circleInvisible"));
       d3.selectAll(".circle2")
